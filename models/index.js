@@ -10,10 +10,7 @@ const Page = db.define('page', {
     },
     slug: {
          type: Sequelize.STRING,
-         allowNull: false,
-         validate: {
-             isUrl: true
-         }
+         allowNull: false
     },
     content: {
         type: Sequelize.TEXT,
@@ -23,6 +20,10 @@ const Page = db.define('page', {
         type: Sequelize.ENUM('open', 'closed'),
         defaultValue: 'open'
     }
+});
+
+Page.beforeValidate((page) => {
+    page.slug = page.title.replace(/[^a-zA-Z]+/g, '_').toLowerCase();
 });
 
 const User = db.define('user', {
