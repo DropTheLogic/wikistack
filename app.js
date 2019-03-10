@@ -8,6 +8,9 @@ const models = require('./models/index');
 const wikiRoutes = require('./routes/wiki');
 const userRoutes = require('./routes/user');
 
+const layout = require('./views/layout');
+const main = require('./views/main');
+
 const app = express();
 
 app.use(morgan('dev'));
@@ -17,9 +20,12 @@ app.use(express.urlencoded({extended: false}));
 app.use('/wiki', wikiRoutes);
 app.use('/users', userRoutes);
 
-const layout = require('./views/layout');
-app.get('/', (req, res) => {
-   res.send(layout(''));
+
+app.get('/', async (req, res, next) => {
+  try {
+    let pages = await models.Page.findAll();
+    res.send(main(pages));
+  } catch (error) { next(error); }
 });
 
 // 500 error handling
