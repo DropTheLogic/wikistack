@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
-const layout = require('../views/layout');
+const userList = require('../views/userList');
 
 router.get('/', (req, res, next) => {
-    res.send();
+    res.send(userList([]));
     next();
 });
 

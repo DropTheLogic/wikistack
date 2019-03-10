@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const addPage = require('../views/addPage')
+
+const { Page } = require('../models');
+
+const addPage = require('../views/addPage');
 const layout = require('../views/layout');
-const { Page } = require("../models");
 
 router.get('/', (req, res, next) => {
-  res.redirect('/')
+  res.redirect('/');
 });
 
 router.post('/', async (req, res, next) => {
@@ -16,11 +18,11 @@ router.post('/', async (req, res, next) => {
   try {
     await page.save();
     res.redirect('/');
-  } catch (error) { next(error) }
+  } catch (error) { next(error); }
 });
 
 router.get('/add', (req, res, next) => {
-  res.send(addPage())
+  res.send(addPage());
 });
 
 module.exports = router;

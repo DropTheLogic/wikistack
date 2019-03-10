@@ -1,31 +1,47 @@
 const express = require('express');
 const morgan = require('morgan');
-const { db } = require('./models');
+const html = require('html-template-tag');
+const path = require('path');
+
+const models = require('./models/index');
 
 const wikiRoutes = require('./routes/wiki');
 const userRoutes = require('./routes/user');
 
-const models = require('./models/index');
-
 const app = express();
 
-db.authenticate().
-then(() => {
-  console.log('connected to the database');
-});
-
-app.use(morgan("dev"));
-app.use(express.static(__dirname + "/public"));
+app.use(morgan('dev'));
+app.use(express.static(path.join(__dirname, '/public')));
 app.use(express.urlencoded({extended: false}));
 
 app.use('/wiki', wikiRoutes);
+app.use('/users', userRoutes);
 
 const layout = require('./views/layout');
 app.get('/', (req, res) => {
    res.send(layout(''));
 });
 
-const init = async () => {
+// 500 error handling
+app.use((err, req, res, next) => {
+  console.error(err.message);
+  res.status(500).send(layout(
+    html`
+      <h3>Oh snap!</h3>
+      <p>Something went wrong. Let's try that again.</p>
+      <code>${err}</code>`
+  ));
+});
+
+const startServer = async () => {
+  // Ensure connection to db
+  await models.db.authenticate()
+    .then(() => console.log('Database authenticated'))
+    .catch((err) => {
+      console.log('Error authenticating database');
+      console.error(err);
+    });
+  // Ensure database is syncd
   await models.db.sync({ force: true });
 
   const PORT = 4449;
@@ -34,4 +50,4 @@ const init = async () => {
   });
 };
 
-init();
+startServer();
