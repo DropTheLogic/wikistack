@@ -4,7 +4,6 @@ const router = express.Router();
 const { Page } = require('../models');
 
 const addPage = require('../views/addPage');
-const layout = require('../views/layout');
 
 router.get('/', (req, res, next) => {
   res.redirect('/');

@@ -33,6 +33,15 @@ app.use((err, req, res, next) => {
   ));
 });
 
+// 404 Handling
+app.use((req, res) => {
+  res.status(404).send(layout(
+    html`
+      <h3>404 Page Not Found</h3>
+      <p>Looks like that page doesn't exist...</p>`
+  ));
+});
+
 const startServer = async () => {
   // Ensure connection to db
   await models.db.authenticate()
